@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-data-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-data-service
+  template:
+    metadata:
+      labels:
+        app: mongo-data-service
+    spec:
+      containers:
+        - name: app
+          image: your-docker-image:latest
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: uri
+            - name: MONGO_DB
+              value: your-database
+            - name: MONGO_COLLECTION
+              value: your-collection
+          ports:
+            - containerPort: 8000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
