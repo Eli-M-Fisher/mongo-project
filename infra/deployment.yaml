@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hostile-tweets-ex-deployment
+  labels:
+    app: hostile-tweets-ex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hostile-tweets-ex
+  template:
+    metadata:
+      labels:
+        app: hostile-tweets-ex
+    spec:
+      containers:
+        - name: hostile-tweets-ex
+          image: elif2/hostile-tweets-ex:v4
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_URI
